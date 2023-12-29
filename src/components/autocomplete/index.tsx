@@ -20,6 +20,13 @@ const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
     setActiveOptionIndex(0);
   };
 
+  const onClick = (option: string) => {
+    debugger;
+    setFilteredOptions([]);
+    setUserInput(option);
+    setActiveOptionIndex(0);
+  };
+
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     const isEnterKey = e.key === "Enter";
     const isArrowUpKey = e.key === "ArrowUp";
@@ -38,38 +45,6 @@ const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
     }
   };
 
-  const OptionsListComponent = () => {
-    return filteredOptions.length ? (
-      <ul className="absolute z-10 w-96 bg-slate-500 rounded-md shadow-lg max-h-96 overflow-y-auto">
-        {filteredOptions.map((option, index) => {
-          return (
-            <li
-              className={`
-                    p-4 bg-slate-500 ${
-                      index === activeOptionIndex ? "bg-slate-700" : ""
-                    } hover:bg-slate-700 cursor-pointer
-                `}
-              key={option}
-              onClick={() => onClick(option)}
-            >
-              {option}
-            </li>
-          );
-        })}
-      </ul>
-    ) : (
-      <div className="absolute z-10 w-96 bg-slate-500 rounded-md shadow-lg p-4">
-        <em>No options available.</em>
-      </div>
-    );
-  };
-
-  const onClick = (option: string) => {
-    setFilteredOptions([]);
-    setUserInput(option);
-    setActiveOptionIndex(0);
-  };
-
   return (
     <div className="relative">
       <input
@@ -81,9 +56,51 @@ const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       />
-      {isFocused && <OptionsListComponent />}
+      {isFocused && (
+        <OptionsList
+          activeOptionIndex={activeOptionIndex}
+          onClick={onClick}
+          options={filteredOptions}
+        />
+      )}
     </div>
   );
 };
+
+interface OptionsListProps {
+  options: string[];
+  activeOptionIndex: number;
+  onClick: (option: string) => void;
+}
+
+function OptionsList({
+  activeOptionIndex,
+  onClick,
+  options,
+}: OptionsListProps) {
+  return options.length ? (
+    <ul className="absolute z-10 w-96 bg-slate-500 rounded-md shadow-lg max-h-96 overflow-y-auto">
+      {options.map((option, index) => {
+        return (
+          <li
+            className={`
+                        p-4 bg-slate-500 ${
+                          index === activeOptionIndex ? "bg-slate-700" : ""
+                        } hover:bg-slate-700 cursor-pointer
+                    `}
+            key={option}
+            onClick={() => onClick(option)}
+          >
+            {option}
+          </li>
+        );
+      })}
+    </ul>
+  ) : (
+    <div className="absolute z-10 w-96 bg-slate-500 rounded-md shadow-lg p-4">
+      <em>No options available.</em>
+    </div>
+  );
+}
 
 export default Autocomplete;
