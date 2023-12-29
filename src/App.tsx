@@ -1,21 +1,40 @@
+import { useCallback, useEffect, useState } from "react";
 import Autocomplete from "./components/autocomplete";
 
+async function getOptions(searchTerm?: string) {
+  const response = await fetch(
+    `https://jsonplaceholder.typicode.com/users?name_like=${searchTerm}`
+  );
+  const data = await response.json();
+  return data.map((user: { name: string }) => user.name);
+}
+
 function App() {
+  const [options, setOptions] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleSearch = useCallback((searchTerm?: string) => {
+    setIsLoading(true);
+    getOptions(searchTerm)
+      .then((options) => {
+        setOptions(options);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    handleSearch();
+  }, [handleSearch]);
+
   return (
     <div className="bg-black min-h-screen w-screen font-bold text-white flex items-center justify-center">
       <Autocomplete
-        options={[
-          "Alligator",
-          "Bask",
-          "Crocodilian",
-          "Death Roll",
-          "Eggs",
-          "Jaws",
-          "Reptile",
-          "Solitary",
-          "Tail",
-          "Wetlands",
-        ]}
+        options={options}
+        onSearch={handleSearch}
+        onSelect={(option) => console.log("Select:", option)}
+        isLoading={isLoading}
       />
     </div>
   );
