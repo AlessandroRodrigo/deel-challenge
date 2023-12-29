@@ -13,8 +13,7 @@ const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const userInput = e.currentTarget.value;
     const filtered = options.filter(
-      (suggestion) =>
-        suggestion.toLowerCase().indexOf(userInput.toLowerCase()) > -1
+      (option) => option.toLowerCase().indexOf(userInput.toLowerCase()) > -1
     );
     setFilteredOptions(filtered);
     setUserInput(userInput);
@@ -34,35 +33,35 @@ const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
     }
   };
 
-  const SuggestionsListComponent = () => {
+  const OptionsListComponent = () => {
     return filteredOptions.length ? (
       <ul className="absolute z-10 w-96 bg-slate-500 rounded-md shadow-lg max-h-96 overflow-y-auto">
-        {filteredOptions.map((suggestion, index) => {
+        {filteredOptions.map((option, index) => {
           return (
             <li
               className={`
                     p-4 bg-slate-500 ${
                       index === activeOptionIndex ? "bg-slate-700" : ""
-                    }
+                    } hover:bg-slate-700 cursor-pointer
                 `}
-              key={suggestion}
-              onClick={() => onClick(suggestion)}
+              key={option}
+              onClick={() => onClick(option)}
             >
-              {suggestion}
+              {option}
             </li>
           );
         })}
       </ul>
     ) : (
       <div className="absolute z-10 w-96 bg-slate-500 rounded-md shadow-lg p-4">
-        <em>No suggestions available.</em>
+        <em>No options available.</em>
       </div>
     );
   };
 
-  const onClick = (suggestion: string) => {
+  const onClick = (option: string) => {
     setFilteredOptions([]);
-    setUserInput(suggestion);
+    setUserInput(option);
     setActiveOptionIndex(0);
   };
 
@@ -77,7 +76,7 @@ const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       />
-      {isFocused && <SuggestionsListComponent />}
+      {isFocused && <OptionsListComponent />}
     </div>
   );
 };
