@@ -1,4 +1,5 @@
-import { ChangeEvent, FC, KeyboardEvent, useState } from "react";
+import { ChangeEvent, FC, KeyboardEvent, useEffect, useState } from "react";
+import { useDebounce } from "../../hooks/use-debounce";
 
 interface AutocompleteProps {
   options: string[];
@@ -14,8 +15,15 @@ const Autocomplete: FC<AutocompleteProps> = ({
   isLoading,
 }) => {
   const [userInput, setUserInput] = useState<string>("");
+  const debouncedUserInput = useDebounce(userInput, 500);
   const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
   const [isFocused, setIsFocused] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (debouncedUserInput) {
+      onSearch?.(debouncedUserInput);
+    }
+  }, [debouncedUserInput, onSearch]);
 
   const filteredOptions = options.filter(
     (option) => option.toLowerCase().indexOf(userInput.toLowerCase()) > -1
@@ -25,7 +33,6 @@ const Autocomplete: FC<AutocompleteProps> = ({
     const userInput = e.currentTarget.value;
     setUserInput(userInput);
     setActiveOptionIndex(0);
-    onSearch?.(userInput);
   };
 
   const onClick = (option: string) => {
