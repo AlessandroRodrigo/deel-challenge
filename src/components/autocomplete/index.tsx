@@ -20,9 +20,7 @@ const Autocomplete: FC<AutocompleteProps> = ({
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   useEffect(() => {
-    if (debouncedUserInput) {
-      onSearch?.(debouncedUserInput);
-    }
+    onSearch?.(debouncedUserInput);
   }, [debouncedUserInput, onSearch]);
 
   const filteredOptions = options.filter(
@@ -70,7 +68,7 @@ const Autocomplete: FC<AutocompleteProps> = ({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setTimeout(() => setIsFocused(false), 100)} // Delay to allow onClick to fire
       />
-      {isLoading && (
+      {isFocused && isLoading && (
         <div className="absolute z-10 w-96 bg-slate-500 rounded-md shadow-lg p-4">
           Loading...
         </div>
