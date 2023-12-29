@@ -4,12 +4,14 @@ interface AutocompleteProps {
   options: string[];
   onSelect?: (option: string) => void;
   onSearch?: (searchTerm: string) => void;
+  isLoading?: boolean;
 }
 
 const Autocomplete: FC<AutocompleteProps> = ({
   options,
   onSearch,
   onSelect,
+  isLoading,
 }) => {
   const [userInput, setUserInput] = useState<string>("");
   const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
@@ -61,7 +63,12 @@ const Autocomplete: FC<AutocompleteProps> = ({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setTimeout(() => setIsFocused(false), 100)} // Delay to allow onClick to fire
       />
-      {isFocused && (
+      {isLoading && (
+        <div className="absolute z-10 w-96 bg-slate-500 rounded-md shadow-lg p-4">
+          Loading...
+        </div>
+      )}
+      {isFocused && !isLoading && (
         <OptionsList
           activeOptionIndex={activeOptionIndex}
           onClick={onClick}
