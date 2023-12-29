@@ -21,14 +21,19 @@ const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    const isEnterKey = e.key === "Enter";
+    const isArrowUpKey = e.key === "ArrowUp";
+    const isArrowDownKey = e.key === "ArrowDown";
+
+    if (isEnterKey) {
       setUserInput(filteredOptions[activeOptionIndex]);
       setFilteredOptions([]);
-    } else if (e.key === "ArrowUp") {
-      if (activeOptionIndex === 0) return;
+    } else if (isArrowUpKey && activeOptionIndex !== 0) {
       setActiveOptionIndex(activeOptionIndex - 1);
-    } else if (e.key === "ArrowDown") {
-      if (activeOptionIndex - 1 === filteredOptions.length) return;
+    } else if (
+      isArrowDownKey &&
+      activeOptionIndex !== filteredOptions.length - 1
+    ) {
       setActiveOptionIndex(activeOptionIndex + 1);
     }
   };
