@@ -2,9 +2,15 @@ import { ChangeEvent, FC, KeyboardEvent, useState } from "react";
 
 interface AutocompleteProps {
   options: string[];
+  onSelect?: (option: string) => void;
+  onSearch?: (searchTerm: string) => void;
 }
 
-const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
+const Autocomplete: FC<AutocompleteProps> = ({
+  options,
+  onSearch,
+  onSelect,
+}) => {
   const [userInput, setUserInput] = useState<string>("");
   const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
   const [isFocused, setIsFocused] = useState<boolean>(false);
@@ -17,11 +23,13 @@ const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
     const userInput = e.currentTarget.value;
     setUserInput(userInput);
     setActiveOptionIndex(0);
+    onSearch?.(userInput);
   };
 
   const onClick = (option: string) => {
     setUserInput(option);
     setActiveOptionIndex(0);
+    onSelect?.(option);
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -31,6 +39,7 @@ const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
 
     if (isEnterKey) {
       setUserInput(filteredOptions[activeOptionIndex]);
+      onSelect?.(filteredOptions[activeOptionIndex]);
     } else if (isArrowUpKey && activeOptionIndex !== 0) {
       setActiveOptionIndex(activeOptionIndex - 1);
     } else if (
