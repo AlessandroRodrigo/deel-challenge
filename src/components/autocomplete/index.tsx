@@ -50,7 +50,7 @@ const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
         value={userInput}
         className="text-black p-4 w-96 rounded-md outline-none focus:ring-2 focus:ring-slate-500"
         onFocus={() => setIsFocused(true)}
-        onBlur={() => setTimeout(() => setIsFocused(false), 100)}
+        onBlur={() => setTimeout(() => setIsFocused(false), 100)} // Delay to allow onClick to fire
       />
       {isFocused && (
         <OptionsList
