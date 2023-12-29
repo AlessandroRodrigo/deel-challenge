@@ -2,8 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 import Autocomplete from "./components/autocomplete";
 
 async function getOptions(searchTerm?: string) {
+  const urlParams = new URLSearchParams();
+  searchTerm && urlParams.append("name_like", searchTerm || "");
+
   const response = await fetch(
-    `https://jsonplaceholder.typicode.com/users?name_like=${searchTerm}`
+    `https://jsonplaceholder.typicode.com/users?${urlParams.toString()}`
   );
   const data = await response.json();
   return data.map((user: { name: string }) => user.name);
