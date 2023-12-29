@@ -77,7 +77,7 @@ const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
         onChange={onChange}
         onKeyDown={onKeyDown}
         value={userInput}
-        className="text-black p-4 w-96 rounded-md"
+        className="text-black p-4 w-96 rounded-md outline-none focus:ring-2 focus:ring-slate-500"
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       />
