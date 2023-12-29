@@ -57,6 +57,7 @@ const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
           activeOptionIndex={activeOptionIndex}
           onClick={onClick}
           options={filteredOptions}
+          userInput={userInput}
         />
       )}
     </div>
@@ -67,27 +68,38 @@ interface OptionsListProps {
   options: string[];
   activeOptionIndex: number;
   onClick: (option: string) => void;
+  userInput: string;
 }
 
 function OptionsList({
   activeOptionIndex,
   onClick,
   options,
+  userInput,
 }: OptionsListProps) {
   return options.length ? (
     <ul className="absolute z-10 w-96 bg-slate-500 rounded-md shadow-lg max-h-96 overflow-y-auto">
       {options.map((option, index) => {
+        const startIndex = option
+          .toLowerCase()
+          .indexOf(userInput.toLowerCase());
+        const endIndex = startIndex + userInput.length;
+
+        const beforeMatch = option.slice(0, startIndex);
+        const match = option.slice(startIndex, endIndex);
+        const afterMatch = option.slice(endIndex);
+
         return (
           <li
-            className={`
-                        p-4 bg-slate-500 ${
-                          index === activeOptionIndex ? "bg-slate-700" : ""
-                        } hover:bg-slate-700 cursor-pointer
-                    `}
+            className={`p-4 bg-slate-500 hover:bg-slate-700 cursor-pointer ${
+              index === activeOptionIndex ? "bg-slate-700" : ""
+            }`}
             key={option}
             onClick={() => onClick(option)}
           >
-            {option}
+            {beforeMatch}
+            <span className="bg-yellow-600">{match}</span>
+            {afterMatch}
           </li>
         );
       })}
