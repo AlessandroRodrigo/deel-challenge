@@ -5,23 +5,21 @@ interface AutocompleteProps {
 }
 
 const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
-  const [filteredOptions, setFilteredOptions] = useState<string[]>(options);
   const [userInput, setUserInput] = useState<string>("");
   const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
+  const filteredOptions = options.filter(
+    (option) => option.toLowerCase().indexOf(userInput.toLowerCase()) > -1
+  );
+
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const userInput = e.currentTarget.value;
-    const filtered = options.filter(
-      (option) => option.toLowerCase().indexOf(userInput.toLowerCase()) > -1
-    );
-    setFilteredOptions(filtered);
     setUserInput(userInput);
     setActiveOptionIndex(0);
   };
 
   const onClick = (option: string) => {
-    setFilteredOptions([]);
     setUserInput(option);
     setActiveOptionIndex(0);
   };
@@ -33,7 +31,6 @@ const Autocomplete: FC<AutocompleteProps> = ({ options }) => {
 
     if (isEnterKey) {
       setUserInput(filteredOptions[activeOptionIndex]);
-      setFilteredOptions([]);
     } else if (isArrowUpKey && activeOptionIndex !== 0) {
       setActiveOptionIndex(activeOptionIndex - 1);
     } else if (
