@@ -1,4 +1,5 @@
-import { ChangeEvent, FC, KeyboardEvent, useState } from "react";
+import { ChangeEvent, FC, useState } from "react";
+import { useActiveOptionIndex } from "./hooks/use-active-option-index";
 import { useSearch } from "./hooks/use-search";
 
 interface AutocompleteProps {
@@ -15,40 +16,26 @@ const Autocomplete: FC<AutocompleteProps> = ({
   isLoading,
 }) => {
   const { onChange: onChangeSearch, userInput } = useSearch(onSearch);
-  const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
-  const [isFocused, setIsFocused] = useState<boolean>(false);
-
   const filteredOptions = options.filter(
     (option) => option.toLowerCase().indexOf(userInput.toLowerCase()) > -1
   );
+  const { activeOptionIndex, onKeyDown, resetActiveOptionIndex } =
+    useActiveOptionIndex({
+      options,
+      onChangeSearch,
+      onSelect,
+    });
+  const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChangeSearch(e.target.value);
-    setActiveOptionIndex(0);
+    resetActiveOptionIndex();
   };
 
   const onClick = (option: string) => {
     onChangeSearch(option);
-    setActiveOptionIndex(0);
+    resetActiveOptionIndex();
     onSelect?.(option);
-  };
-
-  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    const isEnterKey = e.key === "Enter";
-    const isArrowUpKey = e.key === "ArrowUp";
-    const isArrowDownKey = e.key === "ArrowDown";
-
-    if (isEnterKey) {
-      onChangeSearch(filteredOptions[activeOptionIndex]);
-      onSelect?.(filteredOptions[activeOptionIndex]);
-    } else if (isArrowUpKey && activeOptionIndex !== 0) {
-      setActiveOptionIndex(activeOptionIndex - 1);
-    } else if (
-      isArrowDownKey &&
-      activeOptionIndex !== filteredOptions.length - 1
-    ) {
-      setActiveOptionIndex(activeOptionIndex + 1);
-    }
   };
 
   return (
