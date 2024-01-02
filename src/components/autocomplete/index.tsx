@@ -1,5 +1,5 @@
-import { ChangeEvent, FC, KeyboardEvent, useEffect, useState } from "react";
-import { useDebounce } from "../../hooks/use-debounce";
+import { ChangeEvent, FC, KeyboardEvent, useState } from "react";
+import { useSearch } from "./hooks/use-search";
 
 interface AutocompleteProps {
   options: string[];
@@ -14,27 +14,21 @@ const Autocomplete: FC<AutocompleteProps> = ({
   onSelect,
   isLoading,
 }) => {
-  const [userInput, setUserInput] = useState<string>("");
-  const debouncedUserInput = useDebounce(userInput, 500);
+  const { onChange: onChangeSearch, userInput } = useSearch(onSearch);
   const [activeOptionIndex, setActiveOptionIndex] = useState<number>(0);
   const [isFocused, setIsFocused] = useState<boolean>(false);
-
-  useEffect(() => {
-    onSearch?.(debouncedUserInput);
-  }, [debouncedUserInput, onSearch]);
 
   const filteredOptions = options.filter(
     (option) => option.toLowerCase().indexOf(userInput.toLowerCase()) > -1
   );
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const userInput = e.currentTarget.value;
-    setUserInput(userInput);
+    onChangeSearch(e.target.value);
     setActiveOptionIndex(0);
   };
 
   const onClick = (option: string) => {
-    setUserInput(option);
+    onChangeSearch(option);
     setActiveOptionIndex(0);
     onSelect?.(option);
   };
@@ -45,7 +39,7 @@ const Autocomplete: FC<AutocompleteProps> = ({
     const isArrowDownKey = e.key === "ArrowDown";
 
     if (isEnterKey) {
-      setUserInput(filteredOptions[activeOptionIndex]);
+      onChangeSearch(filteredOptions[activeOptionIndex]);
       onSelect?.(filteredOptions[activeOptionIndex]);
     } else if (isArrowUpKey && activeOptionIndex !== 0) {
       setActiveOptionIndex(activeOptionIndex - 1);
